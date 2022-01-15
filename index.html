@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #table {
+            border-collapse: collapse;
+            margin: 40px auto;
+        }
+        td{
+            border: 1px solid black; 
+            width: 100px;
+            height: 100px;
+            text-align: center;
+            font: 1.5em 'sans-serif';
+            transition: background-color .2s linear,box-shadow .2s linear ;
+            cursor: pointer;
+            
+        }
+        button{
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <span>Осталось время:<span id="timeDisp">20</span> секунд</span>
+    <table id="table"></table>
+   
+    <script>
+        const table = document.getElementById('table');
+        const timeDisp = document.getElementById('timeDisp');
+        const td = document.getElementsByTagName('td');
+        let numbers = [];
+        let color = 'white';
+        let check = [];
+        let tdNum = 0;
+        let time = 19;
+        let timeG =  setInterval(timeUp,1000);
+       
+       
+        show();
+        function show(){
+            startG();
+            color = "white"
+            let kod = '';
+            for(let i = 0; i < 4; i++){
+                kod += '<tr>';
+                    for(let j = 0; j < 4; j++){
+                        let x = rand(0, numbers.length - 1)
+                        kod += '<td onclick="checkNumb(' + numbers[x] + ','+ tdNum++ + ')" style="background-color:'+ color + ';">'+ numbers[x]+'</td>';
+                        numbers.splice(x,1)
+                    }
+                kod += '</tr>';
+            }
+           
+            table.innerHTML = kod;
+        }
+
+        function startG(){
+            // Обнулять всё, если игрок решит еще раз поиграть **
+            numbers= [];
+            check = [];
+            tdNum = 0;
+            //**
+            for(let i = 1; i <= 16; i++ ){
+                numbers.push(i);
+            }
+        }
+
+        function checkNumb(i,j){
+            check.push(i);
+            if(check[0] == 1){
+                color = "#65f565";
+            }else{
+                check = [];
+                color = "white"
+            }
+
+            if(check.length > 1 && check[check.length - 1] - check[check.length - 2] != 1 ){ // Проверка на полседовательность цифр
+                check.splice(check.length-1,1);
+                color = "#ecfd46";
+                setTimeout(function(){td[j].style.backgroundColor = "white"},1000);
+            }
+            td[j].style.backgroundColor = color;
+            setTimeout(checkEndGame,300);
+        }
+
+
+        function checkEndGame(){
+            if(check[check.length-1] == 16) {
+                let end = confirm(`Поздравляем! Вы успешно завершили игру за ${20 - time} секунд! Хотите начать заново?`);
+                if(end) {
+                    time = 20;
+                    startG();
+                    show();
+                } else {
+                   gameOver();
+                   clearInterval(timeG);
+                }
+            }
+        }
+
+        function timeUp(){
+            
+            timeDisp.innerHTML = time;
+            time--; 
+            if(time < 0){
+                alert('Увы.. у вас время истекло :(')
+                clearInterval(timeG);
+                gameOver();
+            }
+        }
+       
+        
+        function gameOver(){
+            document.write('<button onclick="reload()" style="display:block;margin:0 auto;">Начать игру!</button>')
+        }
+        
+        function reload(){
+            document.location.reload();
+        }
+         
+        
+
+        function rand(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) ) + min;
+        }
+    </script>
+</body>
+</html>
