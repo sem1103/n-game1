@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #table {
+            border-collapse: collapse;
+            margin: 40px auto;
+        }
+        td{
+            border: 1px solid black; 
+            width: 100px;
+            height: 100px;
+            text-align: center;
+            font: 1.5em 'sans-serif';
+            transition: background-color .2s linear,box-shadow .2s linear ;
+            cursor: pointer;
+            
+        }
+    </style>
+</head>
+<body>
+    <span>Время: <span id="minute">0</span> минут <span id="second">0</span> секунд</span>
+    <table id="table"></table>
+   
+    <script>
+        const table = document.getElementById('table');
+        const minute = document.getElementById('minute');
+        const second = document.getElementById('second');
+        let numbers = [''];
+        let tabArr = [];
+        let empt = [];
+        let allNumb = '';
+        let count = 0;
+        let min = 0;
+        let sec = 0;
+        let timeFunc = setInterval(time,1000);
+
+        for(let i = 1; i <= 15; i++ ){
+            numbers.push(i);
+            allNumb += i + ',';
+        }
+        for(let i = 0; i < 4; i++ ){
+            tabArr[i] = [];
+            for(let j = 0; j < 4; j++ ){
+                let x = rand(0, numbers.length - 1);
+                if(!numbers[x]){
+                    empt[0] = i;
+                    empt[1] = j;
+                }
+                tabArr[i][j] = numbers[x];
+                numbers.splice(x,1);
+            }
+        }
+        show();
+        function show(){
+            let kod = '';
+            for(let i = 0; i < 4; i++){
+                kod += '<tr>';
+                    for(let j = 0; j < 4; j++){
+                        kod += '<td onclick="transition(' + i + ','+ j + ')">'+ tabArr[i][j]+'</td>';
+                    }
+                kod += '</tr>';
+            }
+            table.innerHTML = kod;
+        }
+
+       function transition(i,j){
+          
+           if(i == empt[0] && Math.abs(j - empt[1]) == 1 || j == empt[1] && Math.abs(i - empt[0]) == 1 ){
+               tabArr[empt[0]][empt[1]] = tabArr[i][j];
+               tabArr[i][j] = '';
+               empt[0] = i;
+               empt[1] = j; 
+               count++;
+               show();
+               checkEndGame();
+           }
+        }
+        function checkEndGame(){
+            if(tabArr.join(',') == allNumb) {
+                alert(`Поздравляю! Вы завершили игру за ${min} минут ${sec} секунд за ${count} ходов! `);
+                clearInterval(timeFunc);
+            } else console.log('Продолжайте!');
+        }
+
+        function time(){
+            sec++;
+            if(sec > 59){
+                min++;
+                sec = 0;
+            }
+            second.innerHTML = sec
+            minute.innerHTML = min;
+        }
+
+        
+
+        function rand(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) ) + min;
+        }
+    </script>
+</body>
+</html>
